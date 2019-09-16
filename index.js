@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const db = require('./database/dbConfig.js');
 const Users = require('./users/users-model.js');
+const bcrypt = require('bcryptjs')
 
 const server = express();
 
@@ -50,6 +51,14 @@ server.get('/api/users', (req, res) => {
       res.json(users);
     })
     .catch(err => res.send(err));
+});
+
+server.get('/hash', (req, res) => {
+  let name = req.query.name;
+  // hash the name
+  const hash = bcrypt.hashSync(name, 14); // use bcryptjs to hash the name
+
+  res.send(`the hash for ${name} is ${hash}`);
 });
 
 const port = process.env.PORT || 5000;
