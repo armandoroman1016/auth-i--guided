@@ -65,3 +65,23 @@ server.get('/hash', (req, res) => {
 
 const port = process.env.PORT || 5000;
 server.listen(port, () => console.log(`\n** Running on port ${port} **\n`));
+
+
+function restricted(req, res, next){
+  const {username, password} = req.headers;
+
+  if(username && password){
+    Users.findBy({username})
+      .first()
+      .then( user =>{
+        if(user && bcrypt.compareSync(user.password && password)){
+          next();
+        }else{
+          res.status(401).json({message: 'Invalid Credentials'})
+        }
+      })
+      .catch( err => res.status(500).json(err))
+  }else{
+    res.status(400).json({message: 'missing credentials'})
+  }
+}
